@@ -1,9 +1,22 @@
+"""Output handlers for the PhotonIDE logging system.
+
+Manages logging initialization, console output, and file writing.
+"""
+
 import os
 
 from . import config
 from .formatters import format_message, get_file_name, get_timestamp
 
-def print_internal_error(message: str):
+def print_internal_error(message: str) -> None:
+    """Print an internal logging error directly to the console.
+
+    Bypasses file logging to avoid recursive failures when the logging
+    system cannot access its output file.
+
+    Args:
+        message: Description of the internal logging error.
+    """
     formatted_message = (
         f"[ERROR] [{get_timestamp()}] [Logging] {message}"
     )
@@ -13,7 +26,15 @@ def print_internal_error(message: str):
         f"{config.RESET_COLOR}"
     )
 
-def initialize_logging(logger):
+def initialize_logging(logger) -> None:
+    """Initialize the shared logging output destinations.
+
+    Creates the log directory and a new log file. If either operation
+    fails, file logging is disabled while console output remains available.
+
+    Args:
+        logger: Logger instance used to record initialization messages.
+    """
     try:
         os.makedirs("logs", exist_ok=True)
     except OSError as e:
@@ -48,8 +69,27 @@ def initialize_logging(logger):
 
     logger._log_internal("Logger initialized", "info")
 
+def log_message(
+    logger,
+    name: str,
+    message: str,
+    level: str = "info",
+) -> None:
+    """Write a formatted log message to the configured destinations.
 
-def log_message(logger, name: str, message: str, level: str = "info"):
+    Messages are printed to the console and appended to the log file
+    when file logging is enabled. A file-writing failure disables further
+    file logging without interrupting console output.
+
+    Args:
+        logger: Logger instance used to report internal output errors.
+        name: Name of the component generating the message.
+        message: Content of the message to record.
+        level: Severity level of the message. Defaults to ``info``.
+
+    Raises:
+        ValueError: If the specified severity level is unsupported.
+    """
     level = level.lower()
 
     if level not in config.VALID_LEVELS:
