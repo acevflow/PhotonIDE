@@ -1,22 +1,32 @@
+"""Application entry point for PhotonIDE.
+
+Initializes the logging system, configures the main application window,
+and starts the Tkinter event loop.
+"""
+
 import tkinter
 
 from core import Logger
 
 def main() -> None:
+    """Initialize and run the PhotonIDE application."""
     logger = Logger("PhotonIDE")
 
     logger.info("Starting PhotonIDE application")
     logger.debug("Entering main()")
 
     try:
+        # Create the main application window.
         logger.debug("Creating the main Tkinter window")
         root = tkinter.Tk()
         logger.debug("Main Tkinter window created successfully")
 
+        # Configure the application window title.
         logger.debug("Setting application window title")
         root.title("PhotonIDE")
         logger.info("Application window title set to 'PhotonIDE'")
 
+        # Define the initial window dimensions.
         window_width = 1000
         window_height = 600
 
@@ -25,6 +35,7 @@ def main() -> None:
             f"{window_width}x{window_height}"
         )
 
+        # Retrieve screen dimensions to calculate the window position.
         logger.debug("Retrieving screen dimensions")
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
@@ -35,13 +46,12 @@ def main() -> None:
         )
 
         logger.debug("Calculating window position")
-        x = (screen_width // 2) - (window_width // 2)
-        y = (screen_height // 2) - (window_height // 2)
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
 
-        logger.debug(
-            f"Calculated window position: x={x}, y={y}"
-        )
+        logger.debug(f"Calculated window position: x={x}, y={y}")
 
+        # Position the window at the center of the primary screen.
         logger.debug("Applying window geometry")
         root.geometry(
             f"{window_width}x{window_height}+{x}+{y}"
@@ -51,6 +61,7 @@ def main() -> None:
             f"{window_width}x{window_height} at ({x}, {y})"
         )
 
+        # Set the minimum dimensions allowed when resizing the window.
         min_width = 800
         min_height = 500
 
@@ -60,6 +71,7 @@ def main() -> None:
         )
         root.minsize(min_width, min_height)
 
+        # Register the callback for the window's close event.
         logger.debug("Registering window close event handler")
         root.protocol(
             "WM_DELETE_WINDOW",
@@ -75,11 +87,10 @@ def main() -> None:
         logger.debug("Tkinter main event loop terminated")
         logger.info("PhotonIDE application terminated normally")
 
-    except tkinter.TclError:
-        logger.exception if False else None
+    except tkinter.TclError as error:
         logger.critical(
-            "A Tkinter error occurred while initializing or running "
-            "the application"
+            f"A Tkinter error occurred during application execution: "
+            f"{error}"
         )
         raise
 
@@ -91,6 +102,12 @@ def main() -> None:
         raise
 
 def on_close(root: tkinter.Tk, logger: Logger) -> None:
+    """Handle the main window's close event.
+
+    Args:
+        root: The main Tkinter application window.
+        logger: Logger instance used to record shutdown events.
+    """
     logger.info("Window close event received")
     logger.debug("Preparing to destroy the main window")
 
