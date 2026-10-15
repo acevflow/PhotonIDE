@@ -15,6 +15,14 @@ The project is currently under development.
 
 PhotonIDE is in its early stages of development. Its structure, features, and capabilities may evolve over time.
 
+## Documentation
+
+Project documentation is available in the [`docs/`](docs/) directory.
+
+The documentation includes technical guides, module references, and implementation details as the project evolves.
+
+Documentation will be expanded as new features and components are developed.
+
 ## Installation
 
 ### Prerequisites
